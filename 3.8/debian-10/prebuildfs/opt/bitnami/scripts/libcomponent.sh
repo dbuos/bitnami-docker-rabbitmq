@@ -23,7 +23,8 @@ DOWNLOAD_URL="https://downloads.bitnami.com/files/stacksmith"
 component_unpack() {
     local name="${1:?name is required}"
     local version="${2:?version is required}"
-    local base_name="${name}-${version}-${OS_NAME}-${OS_ARCH}-${OS_FLAVOUR}"
+    local base_name="${name}-${version}-linux-arm64-debian-10"
+    local base_name="https://downloads.bitnami.com/files/stacksmith/erlang-22.3.0-0-linux-arm64-debian-10.tar.gz"
     local package_sha256=""
     local directory="/opt/bitnami"
     

@@ -26,19 +26,19 @@
 rabbitmq_env() {
     cat <<"EOF"
 # Paths
-export RABBITMQ_VOLUME_DIR="/bitnami/rabbitmq"
-export RABBITMQ_BASE_DIR="/opt/bitnami/rabbitmq"
-export RABBITMQ_BIN_DIR="${RABBITMQ_BASE_DIR}/sbin"
-export RABBITMQ_DATA_DIR="${RABBITMQ_VOLUME_DIR}/mnesia"
-export RABBITMQ_CONF_DIR="${RABBITMQ_BASE_DIR}/etc/rabbitmq"
+export RABBITMQ_VOLUME_DIR="/var/lib/rabbitmq"
+export RABBITMQ_BASE_DIR="/usr/lib/rabbitmq/lib/rabbitmq_server-3.8.9"
+export RABBITMQ_BIN_DIR="/usr/sbin"
+export RABBITMQ_DATA_DIR="/var/lib/rabbitmq/mnesia"
+export RABBITMQ_CONF_DIR="/etc/rabbitmq"
 export RABBITMQ_CONF_FILE="${RABBITMQ_CONF_DIR}/rabbitmq.conf"
 export RABBITMQ_CONF_ENV_FILE="${RABBITMQ_CONF_DIR}/rabbitmq-env.conf"
-export RABBITMQ_HOME_DIR="${RABBITMQ_BASE_DIR}/.rabbitmq"
-export RABBITMQ_LIB_DIR="${RABBITMQ_BASE_DIR}/var/lib/rabbitmq"
-export RABBITMQ_LOG_DIR="${RABBITMQ_BASE_DIR}/var/log/rabbitmq"
-export RABBITMQ_PLUGINS_DIR="${RABBITMQ_BASE_DIR}/plugins"
+export RABBITMQ_HOME_DIR="/var/lib/rabbitmq"
+export RABBITMQ_LIB_DIR="/var/lib/rabbitmq"
+export RABBITMQ_LOG_DIR="/var/log/rabbitmq"
+export RABBITMQ_PLUGINS_DIR="/usr/lib/rabbitmq/lib/rabbitmq_server-3.8.9/plugins"
 export RABBITMQ_MOUNTED_CONF_DIR="${RABBITMQ_MOUNTED_CONF_DIR:-${RABBITMQ_VOLUME_DIR}/conf}"
-export PATH="${RABBITMQ_BIN_DIR}:${PATH}"
+#export PATH="${RABBITMQ_BIN_DIR}:${PATH}"
 
 # OS
 export RABBITMQ_DAEMON_USER="rabbitmq"
@@ -388,6 +388,7 @@ rabbitmq_start_bg() {
     local start_command=("$RABBITMQ_BIN_DIR/rabbitmq-server")
     am_i_root && start_command=("gosu" "$RABBITMQ_DAEMON_USER" "${start_command[@]}")
     debug_execute "${start_command[@]}" &
+#    /usr/lib/rabbitmq/bin/rabbitmq-server &
     export RABBITMQ_PID="$!"
 
     if ! retry_while "debug_execute ${RABBITMQ_BIN_DIR}/rabbitmqctl wait --pid $RABBITMQ_PID --timeout 5" 10 10; then
@@ -506,7 +507,7 @@ rabbitmq_initialize() {
     [[ ! -f "${RABBITMQ_LIB_DIR}/.start" ]] && touch "${RABBITMQ_LIB_DIR}/.start"
     [[ ! -f "${RABBITMQ_HOME_DIR}/.erlang.cookie" ]] && rabbitmq_create_erlang_cookie
     chmod 400 "${RABBITMQ_HOME_DIR}/.erlang.cookie"
-    ln -sf "${RABBITMQ_HOME_DIR}/.erlang.cookie" "${RABBITMQ_LIB_DIR}/.erlang.cookie"
+#    ln -sf "${RABBITMQ_HOME_DIR}/.erlang.cookie" "${RABBITMQ_LIB_DIR}/.erlang.cookie"
 
     # Resources limits: maximum number of open file descriptors
     [[ -n "${RABBITMQ_ULIMIT_NOFILES:-}" ]] && ulimit -n "${RABBITMQ_ULIMIT_NOFILES}"
